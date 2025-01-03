@@ -14,7 +14,7 @@ const About = () => {
       <div className="mx-auto lg:px-6 max-w-5xl">
         {/* First Section: Why Choose Us */}
         <div className="text-center mb-16" data-aos="fade-up">
-          <h2 className="text-5xl font-extrabold mb-8 text-shadow-lg">
+          <h2 className="sm:text-5xl text-3xl font-extrabold mb-8 text-shadow-lg">
             About Us
           </h2>
           <p className="text-lg leading-relaxed text-opacity-90">
