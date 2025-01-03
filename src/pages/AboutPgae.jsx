@@ -14,7 +14,7 @@ const About = () => {
 
   return (
     <section className="bg-gradient-to-r from-blue-800 to-blue-400 text-white py-16">
-      <div className="container mx-auto px-6 max-w-6xl">
+      <div className="container mx-auto md:px-6 px-3 max-w-6xl">
         {/* Page Heading */}
         <div className="text-center mb-12" data-aos="fade-down">
           <h1 className="text-5xl font-extrabold mb-4">
@@ -82,16 +82,16 @@ const About = () => {
 
         {/* Vision and Mission Section */}
         <div
-          className="bg-blue-700 p-10 rounded-lg shadow-lg text-center"
+          className="bg-white text-blue-500 p-10 rounded-lg shadow-lg text-center"
           data-aos="zoom-in"
         >
-          <h2 className="text-4xl font-bold mb-6">Our Vision</h2>
+          <h2 className="text-4xl font-bold mb-6 text-blue-900">Our Vision</h2>
           <p className="text-lg leading-relaxed mb-8">
             We envision a world where voting is accessible to everyone, secure,
             and completely transparent. By combining technology and innovation,
             we aim to transform the democratic process for future generations.
           </p>
-          <h2 className="text-4xl font-bold mb-6">Our Mission</h2>
+          <h2 className="text-4xl font-bold mb-6 text-blue-900">Our Mission</h2>
           <p className="text-lg leading-relaxed">
             Our mission is to empower individuals by ensuring every vote counts,
             every voice is heard, and democracy thrives in a digital age.

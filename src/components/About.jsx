@@ -10,7 +10,7 @@ const About = () => {
   }, []);
 
   return (
-    <section className="py-16 bg-gradient-to-b from-blue-800 to-blue-400 text-white">
+    <section className="py-16 px-3 bg-gradient-to-b from-blue-800 to-blue-400 text-white">
       <div className="mx-auto lg:px-6 max-w-5xl">
         {/* First Section: Why Choose Us */}
         <div className="text-center mb-16" data-aos="fade-up">
@@ -18,7 +18,7 @@ const About = () => {
             About Us
           </h2>
           <p className="text-lg leading-relaxed text-opacity-90">
-            Welcome to <span className="font-medium text-2xl">Vote</span>, a groundbreaking platform designed to make voting more accessible, secure, and efficient. Our mission is to empower individuals to participate in the democratic process with confidence, transparency, and ease, regardless of their location or technical experience.
+            Welcome to <span className="font-medium text-xl text-yellow-300">Vote</span>, a groundbreaking platform designed to make voting more accessible, secure, and efficient. Our mission is to empower individuals to participate in the democratic process with confidence, transparency, and ease, regardless of their location or technical experience.
             <br />
             <br />
             In a world where technology is transforming every aspect of life, we believe the future of voting should be no different. By leveraging cutting-edge technology, our app ensures that every vote is secure, verifiable, and counted without error. Whether it's a local election, a national vote, or a simple poll within your organization, we are here to support fair, transparent, and fast elections.

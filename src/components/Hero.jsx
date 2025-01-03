@@ -7,7 +7,7 @@ const Hero = () => {
         <div className="xl:max-w-[90%] mx-auto flex justify-around px-3 flex-wrap items-center">
             {/* Left Section */}
             <div className="flex-1 animate-staggered-fade text-center">
-                <h1 className="text-5xl font-bold mb-4 animate-text-slide-in">
+                <h1 className="sm:text-5xl text-4xl font-bold mb-4 animate-text-slide-in">
                     Let's Vote, Your Voice
                 </h1>
                 <p className="text-lg mb-6 text-center animate-fade-in-delay">

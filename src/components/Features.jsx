@@ -5,7 +5,7 @@ import { FaLock, FaEthereum, FaLaptop, FaThumbsUp, FaDollarSign, FaClock } from 
 const Features = () => {
   return (
     <div className="lg:max-w-[90%] mx-auto flex lg:justify-start justify-center">
-      <div className="flex flex-col lg:flex-row items-center justify-center py-20">
+      <div className="flex flex-col lg:flex-row items-center justify-center px-3 py-20">
         {/* Features Sidebar */}
         <div className="flex flex-col items-center justify-center lg:text-center text-start lg:h-[400px] lg:w-1/4 lg:border-r-4 border-blue-500">
           <h1 className="lg:text-6xl text-4xl font-bold lg:rotate-90 rotate-0 text-black">Features</h1>
