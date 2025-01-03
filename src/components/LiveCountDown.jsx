@@ -47,19 +47,19 @@ const LiveCountDown = () => {
       <h2 className="text-4xl font-semibold text-white mb-4" data-aos="fade-up">Next Major Election</h2>
       <p className="text-lg text-white mb-6" data-aos="fade-up">Hurry up! The next election is coming soon!</p>
       <div className="flex justify-center items-center flex-wrap md:space-x-4 gap-4 text-white">
-        <div className="timer-box md:w-[200px] w-[160px]" data-aos="zoom-in">
+        <div className="timer-box md:w-[200px] w-[100%]" data-aos="zoom-in">
           <span className="timer-value">{timeLeft.days}</span>
           <p>Days</p>
         </div>
-        <div className="timer-box md:w-[200px] w-[160px]" data-aos="zoom-in" data-aos-delay="200">
+        <div className="timer-box md:w-[200px] w-[100%]" data-aos="zoom-in" data-aos-delay="200">
           <span className="timer-value">{timeLeft.hours}</span>
           <p>Hours</p>
         </div>
-        <div className="timer-box md:w-[200px] w-[160px]" data-aos="zoom-in" data-aos-delay="400">
+        <div className="timer-box md:w-[200px] w-[100%]" data-aos="zoom-in" data-aos-delay="400">
           <span className="timer-value">{timeLeft.minutes}</span>
           <p>Minutes</p>
         </div>
-        <div className="timer-box md:w-[200px] w-[160px]" data-aos="zoom-in" data-aos-delay="600">
+        <div className="timer-box md:w-[200px] w-[100%]" data-aos="zoom-in" data-aos-delay="600">
           <span className="timer-value">{timeLeft.seconds}</span>
           <p>Seconds</p>
         </div>
