@@ -11,6 +11,8 @@ import AboutPage from '../pages/AboutPgae';
 import InteractiveMap from '../pages/InteractiveMap';
 import Login from '../pages/auth/login';
 import Registration from '../pages/auth/Signup';
+import Profile from '../pages/Profiles/Profiles';
+import NotFound from '../pages/NotFound';
 
 export const footerContext = createContext();
 
@@ -48,6 +50,12 @@ export default function RoutesApp() {
           <Route path='/map' element={<InteractiveMap/>}/>
           <Route path='/login' element={<Login/>}/>
           <Route path='/signup' element={<Registration/>}/>
+
+          {/* profile routes */}
+
+          <Route path='/profile' element={<Profile/>}/>
+          <Route path='*' element={<NotFound/>}/>
+
         </Routes>
         {/* Footer */}
         <footerContext.Provider value={footerData}>

@@ -9,7 +9,7 @@ const Footer = () => {
   const { contact, quickLinks, socialLinks, feedbackLabel } = footerData;
   
   return (
-    <footer className="py-8 bg-gray-800 text-white px-3">
+    <footer className="py-8 bg-gray-900 text-white px-3">
       <div className="container mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8">
         {/* Contact Section */}
         <div className="md:border-r-2 md:pt-0 pt-4 border-gray-600">

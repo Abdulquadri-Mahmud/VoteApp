@@ -10,7 +10,7 @@ function Registration() {
 
   const handleChange = (e, type) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData((prev) => ({ 
       ...prev,
       [type]: { ...prev[type], [name]: value },
     }));

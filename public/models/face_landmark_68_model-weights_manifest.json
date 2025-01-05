@@ -1,0 +1,31 @@
+{
+  "weights": [
+    {
+      "paths": [
+        "face_landmark_68_model-shard1"
+      ],
+      "weights": {
+        "conv1_1/filter": [
+          9216
+        ],
+        "conv1_1/bias": [
+          64
+        ],
+        "conv1_2/filter": [
+          36864
+        ],
+        "conv1_2/bias": [
+          64
+        ],
+        "fc1/filter": [
+          73728
+        ],
+        "fc1/bias": [
+          512
+        ]
+      }
+    }
+  ],
+  "format": "graph",
+  "backend": "webgl"
+}

@@ -1,0 +1,14 @@
+{
+    "weights": [
+      {
+        "paths": ["tiny_face_detector_model-shard1"],
+        "weights": {
+          "1": [50, 128],
+          "2": [256, 128]
+        }
+      }
+    ],
+    "format": "graph",
+    "backend": "webgl"
+  }
+  

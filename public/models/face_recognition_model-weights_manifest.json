@@ -1,0 +1,14 @@
+{
+    "weights": [
+      {
+        "paths": ["face_recognition_model-shard1"],
+        "weights": {
+          "1": [64, 256],
+          "2": [128, 512]
+        }
+      }
+    ],
+    "format": "graph",
+    "backend": "webgl"
+  }
+  
