@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { signUpFailure, signUpStart, signUpSuccess } from "../../store/user/userReducer";
+import { useNavigate } from "react-router-dom";
 
 function Registration() {
   const [activeTab, setActiveTab] = useState("voter"); // Toggle between "voter" and "candidate"
@@ -8,6 +11,8 @@ function Registration() {
   });
   const [showModal, setShowModal] = useState(false); // To toggle modal visibility
 
+  const dispatch = useDispatch();
+
   const handleChange = (e, type) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ 
@@ -16,10 +21,27 @@ function Registration() {
     }));
   };
 
+  let navigate = useNavigate();
+
   const handleSubmit = (e, type) => {
     e.preventDefault();
-    console.log(`${type} data submitted:`, formData[type]);
-    setShowModal(true); // Show modal after form submission
+    try {
+      dispatch(signUpStart());
+
+      if (!formData) {
+        dispatch(signUpFailure('An error occured while submitting form. Please try again later'));
+        return;
+      }
+      console.log(`${type} data submitted:`, formData[type]);
+
+      dispatch(signUpSuccess());
+
+      setShowModal(true); // Show modal after form submission
+      
+      navigate('/login');
+    } catch (error) {
+      dispatch(signUpFailure(error));
+    }
   };
 
   const closeModal = () => {
@@ -50,60 +72,27 @@ function Registration() {
           <div className={`transition-opacity duration-500 ${activeTab === "voter" ? "opacity-100" : "opacity-0 absolute"}`}>
             {/* Voter Registration Form */}
             <form onSubmit={(e) => handleSubmit(e, "voter")}>
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Full Name</label>
-                <input
-                  type="text"
-                  name="fullname"
-                  value={formData.voter.fullname}
-                  onChange={(e) => handleChange(e, "voter")}
-                  className="w-full p-2 border rounded-md"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.voter.email}
-                  onChange={(e) => handleChange(e, "voter")}
-                  className="w-full p-2 border rounded-md"
-                  required
-                />
+              <div className="grid md:grid-cols-2 grid-cols-1 gap-3">
+                <div className="mb-4">
+                  <label className="block text-sm font-medium mb-1">Full Name</label>
+                  <input type="text" name="fullname" value={formData.voter.fullname} onChange={(e) => handleChange(e, "voter")} className="w-full p-2 border rounded-md outline-none" required/>
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium mb-1">Email</label>
+                  <input type="email" name="email" value={formData.voter.email} onChange={(e) => handleChange(e, "voter")} className="w-full p-2 border rounded-md outline-none" required/>
+                </div>
               </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-1">Voter Card Number</label>
-                <input
-                  type="text"
-                  name="voterCardNumber"
-                  value={formData.voter.voterCardNumber}
-                  onChange={(e) => handleChange(e, "voter")}
-                  className="w-full p-2 border rounded-md"
-                  required
-                />
+                <input type="text" name="voterCardNumber" value={formData.voter.voterCardNumber} onChange={(e) => handleChange(e, "voter")} className="w-full p-2 border rounded-md outline-none" required/>
               </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-1">Password</label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.voter.password}
-                  onChange={(e) => handleChange(e, "voter")}
-                  className="w-full p-2 border rounded-md"
-                  required
-                />
+                <input type="password" name="password" value={formData.voter.password} onChange={(e) => handleChange(e, "voter")} className="w-full p-2 border rounded-md outline-none" required/>
               </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-1">Confirm Password</label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={formData.voter.confirmPassword}
-                  onChange={(e) => handleChange(e, "voter")}
-                  className="w-full p-2 border rounded-md"
-                  required
-                />
+                <input type="password" name="confirmPassword" value={formData.voter.confirmPassword} onChange={(e) => handleChange(e, "voter")} className="w-full p-2 border rounded-md outline-none" required/>
               </div>
               <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-md">
                 Register as Voter
@@ -114,76 +103,39 @@ function Registration() {
           <div className={`transition-opacity duration-500 ${activeTab === "candidate" ? "opacity-100" : "opacity-0 absolute"}`}>
             {/* Candidate Registration Form */}
             <form onSubmit={(e) => handleSubmit(e, "candidate")}>
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Full Name</label>
-                <input
-                  type="text"
-                  name="fullname"
-                  value={formData.candidate.fullname}
-                  onChange={(e) => handleChange(e, "candidate")}
-                  className="w-full p-2 border rounded-md"
-                  required
-                />
+              <div className="grid md:grid-cols-2 grid-cols-1 gap-3">
+                <div className="mb-4">
+                  <label className="block text-sm font-medium mb-1">Full Name</label>
+                  <input type="text" name="fullname" value={formData.candidate.fullname} onChange={(e) => handleChange(e, "candidate")} className="w-full p-2 border rounded-md outline-none" required/>
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium mb-1">Email</label>
+                  <input type="email" name="email" value={formData.candidate.email} onChange={(e) => handleChange(e, "candidate")} className="w-full p-2 border rounded-md outline-none" required/>
+                </div>
               </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.candidate.email}
-                  onChange={(e) => handleChange(e, "candidate")}
-                  className="w-full p-2 border rounded-md"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Party</label>
-                <select
-                  name="party"
-                  value={formData.candidate.party}
-                  onChange={(e) => handleChange(e, "candidate")}
-                  className="w-full p-2 border rounded-md"
-                  required
-                >
-                  <option value="">Select Party</option>
-                  <option value="NNPP">NNPP</option>
-                  <option value="APGA">APGA</option>
-                  <option value="APC">APC</option>
-                  <option value="PDP">PDP</option>
-                </select>
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Phone</label>
-                <input
-                  type="text"
-                  name="phone"
-                  value={formData.candidate.phone}
-                  onChange={(e) => handleChange(e, "candidate")}
-                  className="w-full p-2 border rounded-md"
-                  required
-                />
+              <div className="grid md:grid-cols-2 grid-cols-1 gap-3">
+                <div className="mb-4">
+                  <label className="block text-sm font-medium mb-1">Party</label>
+                  <select name="party" value={formData.candidate.party} onChange={(e) => handleChange(e, "candidate")} className="w-full p-2 border rounded-md outline-none" required >
+                    <option value="">Select Party</option>
+                    <option value="NNPP">NNPP</option>
+                    <option value="APGA">APGA</option>
+                    <option value="APC">APC</option>
+                    <option value="PDP">PDP</option>
+                  </select>
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium mb-1">Phone</label>
+                  <input type="text" name="phone" value={formData.candidate.phone} onChange={(e) => handleChange(e, "candidate")} className="w-full p-2 border rounded-md outline-none" required/>
+                </div>
               </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-1">Password</label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.candidate.password}
-                  onChange={(e) => handleChange(e, "candidate")}
-                  className="w-full p-2 border rounded-md"
-                  required
-                />
+                <input type="password" name="password" value={formData.candidate.password} onChange={(e) => handleChange(e, "candidate")} className="w-full p-2 border rounded-md outline-none" required/>
               </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-1">Confirm Password</label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={formData.candidate.confirmPassword}
-                  onChange={(e) => handleChange(e, "candidate")}
-                  className="w-full p-2 border rounded-md"
-                  required
-                />
+                <input type="password" name="confirmPassword" value={formData.candidate.confirmPassword} onChange={(e) => handleChange(e, "candidate")} className="w-full p-2 border rounded-md outline-none" required/>
               </div>
               <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-md">
                 Register as Candidate

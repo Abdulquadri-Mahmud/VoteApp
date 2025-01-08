@@ -13,6 +13,7 @@ import Login from '../pages/auth/login';
 import Registration from '../pages/auth/Signup';
 import Profile from '../pages/Profiles/Profiles';
 import NotFound from '../pages/NotFound';
+import Private_Route from '../components/privateRoute/Private_Route';
 
 export const footerContext = createContext();
 
@@ -52,8 +53,9 @@ export default function RoutesApp() {
           <Route path='/signup' element={<Registration/>}/>
 
           {/* profile routes */}
-
-          <Route path='/profile' element={<Profile/>}/>
+          <Route element={<Private_Route/>}>
+            <Route path='/profile' element={<Profile/>}/>
+          </Route>
           <Route path='*' element={<NotFound/>}/>
 
         </Routes>
