@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FiMenu, FiX } from "react-icons/fi";
 import { useSelector } from "react-redux";
+import { FaUserAlt } from "react-icons/fa";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -19,11 +20,7 @@ export default function Header() {
         </div>
 
         {/* Hamburger Icon for Mobile */}
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="lg:hidden text-3xl text-white hover:scale-110 transition-transform"
-          aria-label="Toggle Menu"
-        >
+        <button onClick={() => setMenuOpen(!menuOpen)} className="lg:hidden text-3xl text-white hover:scale-110 transition-transform" aria-label="Toggle Menu">
           {menuOpen ? <FiX /> : <FiMenu />}
         </button>
 
@@ -52,7 +49,7 @@ export default function Header() {
                 {
                   currentUser ? (
                     <>
-                      <img src="" />
+                      <FaUserAlt className="text-white"/>
                     </>
                   ) : 'Login'
                 }

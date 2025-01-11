@@ -50,7 +50,7 @@ function Registration() {
 
   return (
     <div className="min-h-screen py-20 bg-gradient-to-b from-blue-800 to-blue-400">
-      <div className="max-w-2xl mx-auto p-4 bg-white shadow-md rounded-lg">
+      <div className="max-w-2xl md:mx-auto mx-3 p-4 bg-white shadow-md rounded-lg">
         {/* Tabs */}
         <div className="flex border-b mb-4">
           <button
