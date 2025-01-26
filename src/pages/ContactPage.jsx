@@ -54,12 +54,12 @@ const Contact = () => {
             <div className="container mx-auto px-2 lg:px-20">
                 {/* Header Section */}
                 <div  className="text-center mb-12"  data-aos="fade-up">
-                <h1 className="text-5xl font-extrabold tracking-wide">
-                    Get in <span className="text-yellow-300">Touch</span>
-                </h1>
-                <p className="text-lg mt-4">
-                    Have questions or feedback? We’d love to hear from you. Fill out the form below <br /> or reach out to us directly.
-                </p>
+                  <h1 className="text-5xl font-extrabold tracking-wide">
+                      Get in <span className="text-yellow-300">Touch</span>
+                  </h1>
+                  <p className="text-lg mt-4">
+                      Have questions or feedback? We’d love to hear from you. Fill out the form below <br /> or reach out to us directly.
+                  </p>
                 </div>
 
                 {/* Contact Form Section */}

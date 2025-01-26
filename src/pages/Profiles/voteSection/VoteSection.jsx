@@ -6,6 +6,7 @@ const VotingPanel = () => {
   const [previewImage, setPreviewImage] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [errorModal, setErrorModal] = useState({ isOpen: false, message: "" });
+  // const [successModal, setSuccessModal] = useState({ isOpen: false, message: "" });
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
   const [imageCaptured, setImageCaptured] = useState(false); // Track if an image has been captured
 
@@ -212,7 +213,7 @@ const VotingPanel = () => {
       {errorModal.isOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center">
           <div className="bg-blue-800 text-white p-8 rounded-lg shadow-xl max-w-md w-full">
-            <h2 className="text-xl font-semibold mb-4">Submission Error</h2>
+            {/* <h2 className="text-xl font-semibold mb-4">Submission Success</h2> */}
             <p className="text-lg">{errorModal.message}</p>
             <div className="flex justify-end mt-6">
               <button

@@ -54,7 +54,7 @@ export default function RoutesApp() {
 
           {/* profile routes */}
           <Route element={<Private_Route/>}>
-            <Route path='/profile' element={<Profile/>}/>
+            <Route path='/profile/:id' element={<Profile/>}/>
           </Route>
           <Route path='*' element={<NotFound/>}/>
 

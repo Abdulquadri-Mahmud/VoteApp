@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Modal from "../../components/modal/Modal";
 import { Link, useNavigate } from "react-router-dom";
 import { signinFailure, signinStart, signinSuccess } from "../../store/user/userReducer";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const Login = () => {
 
@@ -12,7 +12,9 @@ const Login = () => {
     rememberMe: false,
   });
 
-  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState({ show: false, title: "", message: "" });
+
+  const {loading, error } = useSelector((state) => state.user);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -25,34 +27,43 @@ const Login = () => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       dispatch(signinStart());
+      const endpoint = `https://vote-app-api.vercel.app/api/candidate-voter/auth/signin`;
 
-      if (!formData) {
-        dispatch(signinFailure('An error occured while submitting form. Please try again later'));
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (data.success === false) {
+        dispatch(signinFailure(data.message));
+        setModalContent({ show: true, title: "Error", message: data.message });
         return;
       }
-      
-      console.log(formData);
-      const {password: pass, ...rest} = formData;
-      dispatch(signinSuccess(rest));
 
-      navigate('/profile');
+      dispatch(signinSuccess(data));
+      setModalContent({ show: true, title: "Success", message: "You have successfully logged in!" });
+      setTimeout(() => navigate(`/profile/${data._id}`), 1500);
 
     } catch (error) {
-      
+      dispatch(signinFailure(error.message));
+      setModalContent({ show: true, title: "Error", message: "An error occurred during login. Please try again." });
     }
   };
 
   const closeModal = () => {
-    setShowModal(false);
+    setModalContent({ ...modalContent, show: false });
   };
 
   return (
     <div className="flex items-center justify-center py-20 bg-gradient-to-b from-blue-800 to-blue-400">
-      <form onSubmit={handleSubmit} className="w-full max-w-md p-8 space-y-6 bg-white mx-3 md:mx-0 shadow-md rounded-lg">
+      <form onSubmit={handleSubmit} className="w-full max-w-md md:p-8 p-3 space-y-6 bg-white mx-3 md:mx-0 shadow-md rounded-lg">
         <h2 className="text-2xl font-bold text-center text-gray-800">Login</h2>
         <div className="space-y-4">
           <div>
@@ -70,12 +81,13 @@ const Login = () => {
               <input type="checkbox" name="rememberMe" checked={formData.rememberMe} onChange={handleChange} className="mr-2 rounded"/>
               Remember Me
             </label>
-            {/* <Link to="#" className="text-sm text-blue-500 hover:underline">
-              Forgot Password?
-            </Link> */}
           </div>
         </div>
-        <button type="submit" className="w-full px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:outline-none"> Login</button>
+        <button type="submit" className="w-full px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          {
+            loading ? 'Loading...' : 'Login'
+          }
+        </button>
         <div className="">
           <p className="text-sm">
             Not have an account?
@@ -83,23 +95,19 @@ const Login = () => {
           </p>
         </div>
       </form>
-      {showModal && (
+      {modalContent.show && (
         <Modal onClose={closeModal}>
           <h2 className="text-2xl font-bold text-center text-gray-800">
-            Success
+            {modalContent.title}
           </h2>
-          <p className="text-center text-gray-600">
-            You have successfully logged in!
+          <p className="text-center py-4 text-gray-600 font-semibold">
+            {modalContent.message}
           </p>
-          <button
-            onClick={closeModal}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          >
+          <button onClick={closeModal} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:outline-none">
             Close
           </button>
         </Modal>
       )}
-      
     </div>
   );
 };

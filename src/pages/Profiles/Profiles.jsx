@@ -1,10 +1,15 @@
 import React, { useState } from "react";
 import { IoAddCircleOutline } from "react-icons/io5";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import VotingPanel from "./voteSection/VoteSection";
+import { useDispatch, useSelector } from "react-redux";
+import { updateFailure, updateStart, updateSuccess } from "../../store/user/userReducer";
 
 const Profile = () => {
+  const { currentUser, loading } = useSelector((state) => (state.user));
+
   const [activeTab, setActiveTab] = useState("Personal Info");
+
   const [elections, setElections] = useState([
     { name: "UP state election", date: "02-04-2022" },
     { name: "Manipur state Election", date: "04-04-2022" },
@@ -12,35 +17,69 @@ const Profile = () => {
     { name: "Bangalore state Election", date: "20-04-2022" },
     { name: "Gurgaon Municipal Corporation", date: "26-04-2022" },
   ]);
+  const [formData, setFormData] = useState({
+    fullname: '',
+    email: '',
+    votersCardNumber: '',
+    password: ''
+  });
+  
   const [newElection, setNewElection] = useState({ name: "", date: "" });
   const [showModal, setShowModal] = useState(false);
   const [showInstructions, setShowInstructions] = useState(false);
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [showFacialRecognitionModal, setShowFacialRecognitionModal] = useState(false);
   const [hasProceeded, setHasProceeded] = useState(false); // Track if user clicked 'Proceed'
-  const [loading, setLoading] = useState(false);
 
-  // Personal info state
-  const [voters, setVoters] = useState({
-    fullname: "John Doe",
-    email: "johndoe@example.com",
-    vtc: "123456789",
-    address: "123 Main Street, City, Country",
-    password: "",
-  });
+  let party;
 
+  if ("party" in currentUser) {
+    party = currentUser.party
+  }
+  
   const handleChange = (e) => {
     const { id, value } = e.target;
-    setVoters((prevVoters) => ({
-      ...prevVoters,
+    setFormData((prevFormData) => ({
+      ...prevFormData,
       [id]: value,
     }));
   };
 
-  const handleSubmit = (e) => {
+  console.log(formData);
+  
+
+  let dispatch = useDispatch();
+
+  const { id } = useParams();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Updated Voters Information: ", voters);
-    // You can now send the updated voters info to an API or save it in the state
+    try {
+          dispatch(updateStart());
+          const endpoint = `https://vote-app-api.vercel.app/api/candidate-voter/auth/update_candidate/${id}`;
+    
+          const res = await fetch(endpoint, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData),
+          });
+    
+          const data = await res.json();
+    
+          if (data.success === false) {
+            dispatch(updateFailure(data.message));
+            setModalContent({ show: true, title: "Error", message: data.message });
+            return;
+          }
+    
+          dispatch(updateSuccess(data));
+          setModalContent({ show: true, title: "Success", message: "You have successfully logged in!" });
+          setTimeout(() => navigate('/profile'), 1500);
+    
+        } catch (error) {
+          dispatch(updateFailure(error.message));
+          setModalContent({ show: true, title: "Error", message: "An error occurred during login. Please try again." });
+        }
   };
 
   const handleAddElection = () => {
@@ -114,20 +153,37 @@ const Profile = () => {
             <form className='mt-6' onSubmit={handleSubmit}>
               <div className='mb-3'>
                 <p className='text-gray-600 font-medium pb-2'>Full Name:</p>
-                  <input onChange={handleChange} id='fullname' type="text" className='p-3 border-2 border-gray-200 placeholder:text-sm outline-none w-full rounded-md text-sm' defaultValue={voters.fullname}/>
+                  <input onChange={handleChange} id='fullname' type="text" className='p-3 border-2 border-gray-200 placeholder:text-sm outline-none w-full rounded-md text-sm' defaultValue={currentUser.fullname}/>
               </div>
               <div className='mb-3'>
                   <p className='text-gray-600 font-medium pb-2'>Email:</p>
-                  <input onChange={handleChange} id='email' type="email" className='p-3 border-2 border-gray-200 placeholder:text-sm outline-none w-full rounded-md text-sm' defaultValue={voters.email}/>
+                  <input onChange={handleChange} id='email' type="email" className='p-3 border-2 border-gray-200 placeholder:text-sm outline-none w-full rounded-md text-sm' defaultValue={currentUser.email}/>
               </div>
-              <div className='mb-3'>
-                  <p className='text-gray-600 font-medium pb-2'>voters Card Number:</p>
-                  <input onChange={handleChange} id='vtc' type="text" className='p-3 border-2 border-gray-200 placeholder:text-sm outline-none w-full rounded-md text-sm' defaultValue={voters.vtc}/>
-              </div>
-              <div className='mb-3'>
+              {
+                "party" in currentUser ? (
+                  <>
+                    <div className="pb-2">
+                      <p className={`pb-2 font-semibold`}>Party</p>
+                      <input type="text" value={party} className="px-2 py-3 outline-none border rounded-md w-full group-disabled:"/>
+                    </div>
+                    <div className="pb-2">
+                      <p className={`pb-2 font-semibold`}>Phone</p>
+                      <input type="text" name="phone" placeholder="Phone" value={currentUser.phone} onChange={handleChange} className="px-2 py-3 outline-none border rounded-md w-full"/>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className='mb-3'>
+                        <p className='text-gray-600 font-medium pb-2'>voters Card Number:</p>
+                        <input onChange={handleChange} id='votersCardNumber' type="text" className='p-3 border-2 border-gray-200 placeholder:text-sm outline-none w-full rounded-md text-sm' defaultValue={currentUser.votersCardNumber}/>
+                    </div>
+                  </>
+                )
+              }
+              {/* <div className='mb-3'>
                   <p className='text-gray-600 font-medium pb-2'>Address:</p>
                   <input onChange={handleChange} id='address' type="text" className='p-3 border-2 border-gray-200 placeholder:text-sm outline-none w-full rounded-md text-sm' defaultValue={voters.password}/>
-              </div>
+              </div> */}
               <div className='mb-3'>
                   <p className='text-gray-600 font-medium pb-2'>Password:</p>
                   <input onChange={handleChange} id='password' type="password" className='p-3 border-2 border-gray-200 placeholder:text-sm outline-none w-full rounded-md text-sm'/>
@@ -212,7 +268,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen py-10 bg-gradient-to-b from-blue-900 to-blue-400">
+    <div className="min-h-screen py-10 px-2 bg-gradient-to-b from-blue-900 to-blue-400">
       <div className="bg-white mx-3  text-gray-800 max-w-full lg:max-w-5xl md:mx-auto rounded-lg overflow-hidden shadow-lg">
         <div className="flex justify-between items-center bg-blue-700 px-6 py-4">
           <div className="flex space-x-6">
