@@ -180,25 +180,11 @@ const Profile = () => {
                   </>
                 )
               }
-              {/* <div className='mb-3'>
-                  <p className='text-gray-600 font-medium pb-2'>Address:</p>
-                  <input onChange={handleChange} id='address' type="text" className='p-3 border-2 border-gray-200 placeholder:text-sm outline-none w-full rounded-md text-sm' defaultValue={voters.password}/>
-              </div> */}
               <div className='mb-3'>
                   <p className='text-gray-600 font-medium pb-2'>Password:</p>
                   <input onChange={handleChange} id='password' type="password" className='p-3 border-2 border-gray-200 placeholder:text-sm outline-none w-full rounded-md text-sm'/>
               </div>
               <div>
-                {/* {
-                  updateError && (
-                    <>
-                      <Alert status='error' rounded={'8px'}>
-                          <AlertIcon />
-                          <AlertDescription>{updateError}</AlertDescription>
-                      </Alert>
-                    </>
-                  )
-                } */}
               </div>
               <div className='flex justify-center mt-3' my={3}>
                   <button type='submit' className='lg:w-[200px] w-full py-2 bg-yellow-500 text-white uppercase font-medium rounded-md'>
@@ -230,20 +216,15 @@ const Profile = () => {
               <h3 className="font-semibold mb-2">Other Elections:</h3>
               <div>
                 {elections.slice(1).map((election, index) => (
-                  <div
-                    key={index}
-                    className="bg-gray-200 p-3 rounded-lg flex justify-between items-center mb-2"
-                  >
+                  <div key={index}
+                    className="bg-gray-200 p-3 rounded-lg flex justify-between items-center mb-2">
                     <span>{election.name}</span>
                     <span>{election.date}</span>
                   </div>
                 ))}
               </div>
             </div>
-            <button
-              onClick={() => setShowModal(true)}
-              className="mt-4 flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg"
-            >
+            <button onClick={() => setShowModal(true)} className="mt-4 flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg">
               <IoAddCircleOutline className="mr-2" />
               Add New Election
             </button>

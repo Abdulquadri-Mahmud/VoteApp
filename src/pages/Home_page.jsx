@@ -4,6 +4,8 @@ import Features from '../components/Features'
 import About from '../components/About';
 import Steps from '../components/Steps';
 import LiveCountDown from '../components/LiveCountDown';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 export const featuresContext = createContext();
 export const stepsContext = createContext();
@@ -36,6 +38,7 @@ export default function Home_page() {
 
   return (
     <div>
+        <Header/>
         <Hero/>
 
         {/* Features */}
@@ -51,7 +54,7 @@ export default function Home_page() {
 
         {/* Live count down  */}
         <LiveCountDown/>
-
+        <Footer/>
         {/*  */}
     </div>
   )

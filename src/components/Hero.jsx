@@ -20,10 +20,10 @@ const Hero = () => {
                 </p>
                 <div className="font-medium text-white">
                     <button className="bg-gradient-to-r from-blue-700 to-blue-300 hover:scale-110 hover:shadow-2xl transition-transform px-6 py-3 rounded-lg mr-4 shadow-lg animate-hover-glow">
-                        <Link to={`${currentUser ? '/profile' : '/signup'}`}>Register</Link>
+                        <Link to={`${currentUser ? '/profile' : '/voters-signup'}`}>Register</Link>
                     </button>
                     <button className="bg-gradient-to-r from-yellow-300 to-yellow-600 hover:scale-110 hover:shadow-2xl transition-transform px-6 py-3 rounded-lg shadow-lg animate-hover-glow">
-                        <Link to={`${currentUser ? '/profile' : '/signup'}`}>Vote Now</Link>
+                        <Link to={`${currentUser ? '/profile' : '/voters-signup'}`}>Vote Now</Link>
                     </button>
                 </div>
             </div>

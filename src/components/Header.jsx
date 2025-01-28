@@ -15,7 +15,9 @@ export default function Header() {
         {/* Logo */}
         <div className="flex items-center space-x-2">
           <h1 className="text-3xl font-extrabold text-white tracking-wide">
-            Vote<span className="text-yellow-300">App</span>
+            <Link to={'/'}>
+              Vote<span className="text-yellow-300">App</span>
+            </Link>
           </h1>
         </div>
 
@@ -45,7 +47,7 @@ export default function Header() {
               </Link>
             </li>
             <li>
-              <Link to={`${ currentUser ? '/profile' : '/login'}`} className={`${currentUser ? '' : ' py-2 px-6 text-white bg-yellow-400 hover:bg-yellow-500 rounded-full shadow-md transition-all duration-300 hover:scale-110 hover:shadow-xl'}`}> 
+              <Link to={`${ currentUser ? `/profile/${currentUser._id}` : '/voters-login'}`} className={`${currentUser ? '' : ' py-2 px-6 text-white bg-yellow-400 hover:bg-yellow-500 rounded-full shadow-md transition-all duration-300 hover:scale-110 hover:shadow-xl'}`}> 
                 {
                   currentUser ? (
                     <>

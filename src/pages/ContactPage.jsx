@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import ReCAPTCHA from "react-google-recaptcha";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 const Contact = () => {
   useEffect(() => {
@@ -50,6 +52,7 @@ const Contact = () => {
 
   return (
     <div className="">
+      <Header/>
         <section className="py-16 bg-gradient-to-b from-blue-800 to-blue-400 text-white">
             <div className="container mx-auto px-2 lg:px-20">
                 {/* Header Section */}
@@ -118,7 +121,7 @@ const Contact = () => {
                 </div>
             </div>
         </section>
-        {/* <Footer/> */}
+        <Footer/>
     </div>
   );
 };

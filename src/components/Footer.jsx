@@ -1,15 +1,36 @@
 // Footer.js (Footer Section)
-import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { IoIosSend } from "react-icons/io";
-import { footerContext } from "../routes/Routes";
-const Footer = () => {
-  const footerData = useContext(footerContext);
+import React, { createContext, useContext } from 'react'
 
+import { FaFacebook, FaInstagramSquare, FaTwitter } from 'react-icons/fa';
+
+const FooterDatas = () => {
+  const footerData = {
+    contact: {
+      phone: ["1800 9090 32", "1800 9090 64"],
+      helpline: ["9090 1234 46", "9090 1234 47"],
+      email: [
+        "complaint@electionindia.gov.in",
+        "info@electionindia.gov.in",
+      ],
+    },
+    quickLinks: [
+      { label: "Register", url: "/register" },
+      { label: "Login", url: "/login" },
+    ],
+    socialLinks: [
+      { icon: <FaFacebook/>, url: "https://twitter.com" },
+      { icon: <FaTwitter />, url: "https://facebook.com" },
+      { icon: <FaInstagramSquare />, url: "https://instagram.com" },
+    ],
+    feedbackLabel: "Quick Feedback",
+    
+  };
   const { contact, quickLinks, socialLinks, feedbackLabel } = footerData;
-  
+
   return (
-    <footer className="py-8 bg-gray-900 text-white px-3">
+    <>
       <div className="container mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8">
         {/* Contact Section */}
         <div className="md:border-r-2 md:pt-0 pt-4 border-gray-600">
@@ -105,6 +126,15 @@ const Footer = () => {
       <p className="text-center mt-6 text-sm">
         &copy; {new Date().getFullYear()} Vote Design. All rights reserved.
       </p>
+    </>
+  )
+}
+
+const Footer = () => {
+  
+  return (
+    <footer className="py-8 bg-gray-900 text-white px-3">
+      <FooterDatas/>
     </footer>
   );
 };
