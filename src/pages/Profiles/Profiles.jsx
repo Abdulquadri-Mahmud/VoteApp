@@ -105,7 +105,7 @@ const Profile = () => {
   return (
     <div className="">
       <Header/>
-        <div className="min-h-screen py-10 px-2 bg-gradient-to-b from-blue-900 to-blue-400">
+        <div className="min-h-screen lg:py-20 py-10 px-2 bg-gradient-to-b from-blue-900 to-blue-400">
           <div className="bg-white mx-3 text-gray-800 max-w-full lg:max-w-5xl md:mx-auto rounded-lg overflow-hidden shadow-lg">
             <div className="flex justify-between items-center bg-blue-700 px-6 py-4">
               <div className="flex space-x-6">
