@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { signUpFailure, signUpStart, signUpSuccess } from '../../../store/user/ElectorialReducer';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 export default function ElectorialSignup() {
     const [formData, setFormData] = useState({});
@@ -20,21 +22,23 @@ export default function ElectorialSignup() {
             [name]: value
         }));
     }
+
+    console.log(formData);
+    
     const handleSubmit = async (e) => {
-        e.preventDefault;
+        e.preventDefault();
 
         try {
             dispatch(signUpStart());
             
             const endpoint = `https://vote-app-api.vercel.app/api/admin/auth/signup`;
 
-            const res = fetch(endpoint, {
+            const res = await fetch(endpoint, {
                 method: 'POST',
                 headers: {'Content-Type' : 'application/json'},
                 body: JSON.stringify(formData),
             });
 
-            
             const data = await res.json();
             
             if (data.success === false) {
@@ -48,10 +52,10 @@ export default function ElectorialSignup() {
             setModalMessage("Registration successful! You can now log in.");
             setShowModal(true);
 
-            setTimeout(() => navigate("/login"), 1500);
+            setTimeout(() => navigate("/electorial-login"), 1500);
 
         } catch (error) {
-            dispatch(signUpFailure(err.message));
+            dispatch(signUpFailure(error.message));
             setModalMessage("An error occurred during registration. Please try again.");
             setShowModal(true);
         }
@@ -83,7 +87,7 @@ export default function ElectorialSignup() {
                             <input type="password" name="password" placeholder="Password" onChange={handleChange} required className="px-2 py-3 outline-none border rounded-md w-full text-sm font-normal"/>
                         </div>
                         <div className="mt-3">
-                            <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-md font-semibold">
+                            <button type="submit" className="w-full bg-yellow-500 text-white py-2 rounded-md font-semibold">
                                 {loading ? "Loading..." : "Register as Voter"}
                             </button>
                         </div>
@@ -108,7 +112,7 @@ export default function ElectorialSignup() {
                     </div>
                 )}
             </div>
-          <Footer/>
+        <Footer/>
     </>
   )
 }

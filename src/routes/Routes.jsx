@@ -15,6 +15,10 @@ import Layout from '../layout/Layout';
 import RegisterCandidate from '../pages/Dashboard/RegisterCandidate';
 import VoteCount from '../pages/Dashboard/VoteCount';
 import Dashboard from '../pages/Dashboard/Dashboard';
+import AllCandidates from '@/pages/Dashboard/AllCandidate';
+import UpdateCandidate from '@/pages/Dashboard/UpdateCandidate';
+import Electoral_private_routes from '@/components/privateRoute/Electoral_private_routes';
+import { useSelector } from 'react-redux';
 
 export default function RoutesApp() {
   
@@ -40,10 +44,15 @@ export default function RoutesApp() {
           </Route>
 
           {/* Dashboard */}
-          <Route path='/dashboard/:id' element={<Layout/>}>
-            <Route path='/dashboard/:id' element={<Dashboard/>}/>
-            <Route path='register-candidate' element={<RegisterCandidate/>}/>
-            <Route path='vote-count' element={<VoteCount/>}/>
+          <Route element={<Electoral_private_routes/>}>
+            <Route path='/dashboard' element={<Layout/>}>
+              <Route path='/dashboard' element={<Dashboard/>}/>
+              <Route path='register-candidate' element={<RegisterCandidate/>}/>
+              <Route path='vote-count' element={<VoteCount/>}/>
+              <Route path='all-candidate' element={<AllCandidates/>}/>
+              <Route path='all-candidate/update-candidate/:id' element={<UpdateCandidate/>}/>
+              <Route path='setting/:id' element={<UpdateCandidate/>}/>
+            </Route>
           </Route>
 
           <Route path='*' element={<NotFound/>}/>

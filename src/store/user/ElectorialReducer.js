@@ -14,7 +14,7 @@ const electorialSlice = createSlice({
             state.loading = true;
         },
         signinSuccess: (state, action) => {
-            state.currentUser = action.payload;
+            state.currentElectorial = action.payload;
             state.loading = false;
             state.error = null;
         },
@@ -26,7 +26,7 @@ const electorialSlice = createSlice({
             state.loading = true;
         },
         signUpSuccess: (state, action) => {
-            state.currentUser = action.payload;
+            state.currentElectorial = action.payload;
             state.loading = false;
             state.error = null;
         },
@@ -38,7 +38,7 @@ const electorialSlice = createSlice({
             state.loading = true;
         },
         updateSuccess: (state, action) => {
-            state.currentUser = action.payload;
+            state.currentElectorial = action.payload;
             state.loading = false;
             state.error = null;
         },
@@ -50,7 +50,7 @@ const electorialSlice = createSlice({
             state.loading = true;
         },
         deleteSuccess: (state) => {
-            state.currentUser = null;  // Clear currentUser on delete
+            state.currentElectorial = null;  // Clear currentElectorial on delete
             state.loading = false;
             state.error = null;
         },
@@ -62,7 +62,7 @@ const electorialSlice = createSlice({
             state.loading = true;
         },
         signOutUserSuccess: (state) => {
-            state.currentUser = null;  // Reset currentUser on sign out
+            state.currentElectorial = null;  // Reset currentElectorial on sign out
             state.loading = false;
             state.error = null;
         },

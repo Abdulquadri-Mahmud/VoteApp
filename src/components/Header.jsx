@@ -6,8 +6,7 @@ import { FaUserAlt } from "react-icons/fa";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
-    const { currentUser, error, loading } = useSelector((state) => state.user);
-  
+  const { currentUser, error, loading } = useSelector((state) => state.user);
 
   return (
     <header className="sticky top-0 z-20 bg-gradient-to-r from-blue-800 to-blue-400 shadow-lg">
@@ -30,32 +29,35 @@ export default function Header() {
         <nav className={`absolute top-full left-0 md:py-0 py-6 md:max-w-[30%] w-full bg-blue-800 lg:bg-transparent lg:static  transition-all duration-500 ease-in-out ${
             menuOpen ? "opacity-100 visible bg-gradient-to-r from-blue-800 to-blue-400 shadow-lg" : "opacity-0 invisible lg:opacity-100 lg:visible "
           }`}>
-          <ul className="flex flex-col lg:flex-row items-center space-y-6 lg:space-y-0 lg:space-x-8 text-lg font-semibold">
+          <ul className="flex flex-col lg:flex-row items-center space-y-6 lg:space-y-0 lg:space-x-4 text-lg font-semibold">
             <li>
-              <Link to="/" className="text-white hover:text-yellow-300 transition-colors duration-300">
+              <Link to="/" className="text-white font-normal hover:text-yellow-300 transition-colors duration-300">
                 Home
               </Link>
             </li>
             <li>
-              <Link to="/about" className="text-white hover:text-yellow-300 transition-colors duration-300">
+              <Link to="/about" className="text-white font-normal hover:text-yellow-300 transition-colors duration-300">
                 About
               </Link>
             </li>
             <li>
-              <Link to="/contact" className="text-white hover:text-yellow-300 transition-colors duration-300">
+              <Link to="/contact" className="text-white font-normal hover:text-yellow-300 transition-colors duration-300">
                 Contact
               </Link>
             </li>
             <li>
-              <Link to={`${ currentUser ? `/profile/${currentUser._id}` : '/voters-login'}`} className={`${currentUser ? '' : ' py-2 px-6 text-white bg-yellow-400 hover:bg-yellow-500 rounded-full shadow-md transition-all duration-300 hover:scale-110 hover:shadow-xl'}`}> 
+              <Link to={`${ currentUser ? `/profile/${currentUser._id}` : '/voters-login'}`} className={`${currentUser ? '' : ' py-2 px-6 text-white font-normal bg-yellow-400 hover:bg-yellow-500 rounded-full shadow-md transition-all duration-300 hover:scale-110 hover:shadow-xl'}`}> 
                 {
                   currentUser ? (
                     <>
-                      <FaUserAlt className="text-white"/>
+                      <FaUserAlt className="text-white font-normal"/>
                     </>
                   ) : 'Login'
                 }
               </Link>
+            </li>
+            <li>
+              <Link to={'/electorial-login'} className="text-white font-normal">Admin</Link>
             </li>
           </ul>
         </nav>

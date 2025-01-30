@@ -4,11 +4,12 @@ import { FaUsers, FaWhatsapp } from 'react-icons/fa';
 import { IoClose } from 'react-icons/io5';
 import { Link, Outlet } from 'react-router-dom';
 import Main_links from './MainLinks';
+import LogoutButton from '@/pages/auth/Electorial/ElectoralLogout';
 
 const mainlinks = [
   {
     title: 'Dashboard',
-    path: '/dashboard/12',
+    path: '/dashboard',
     class: 'px-3 py-1 font-normal hover:text-blue-500 duration-200 rounded-md flex items-center gap-2',
     icon: <MdSpaceDashboard className="text-xl" />,
   },
@@ -24,6 +25,12 @@ const mainlinks = [
     class: 'px-3 py-1 font-normal hover:text-blue-500 duration-200 rounded-md flex items-center gap-2',
     icon: <MdHowToVote className="text-xl" />,
   },
+  {
+    title: 'All Candidate',
+    path: 'all-candidate',
+    class: 'px-3 py-1 font-normal hover:text-blue-500 duration-200 rounded-md flex items-center gap-2',
+    icon: <FaUsers className="text-xl" />,
+  },
 ];
 
 export const SidebarLinkContext = createContext();
@@ -31,7 +38,7 @@ export const SidebarLinkContext = createContext();
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   return (
     <div
-      className={`h-screen overflow-y-auto pb-5 z-20 bg-blue-900 text-gray-400 fixed lg:static ${
+      className={`h-screen relative overflow-y-auto pb-5 z-20 bg-gradient-to-b from-blue-800 to-yellow-700 text-gray-400 fixed lg:static ${
         isOpen ? 'w-64' : 'w-0'
       } transition-all duration-300`}>
       <div className="px-5 py-6 flex items-center justify-between">
@@ -53,15 +60,34 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             </SidebarLinkContext.Provider>
           ))}
       </nav>
+      <div className="absolute bottom-2 left-2 w-[240px] mx-auto">
+        <LogoutButton/>
+      </div>
     </div>
   );
 };
 
 const Header = ({ toggleSidebar }) => {
+  // const routeTitle = location.pathname.split('/') || 'Dashboard';
+
+  let routeTitle = 'Dashboard';
+
+  // Function to update routeTitle when pathname changes
+  
+  function updateRouteTitle() {
+      const path = window.location.pathname;
+      // Adding a leading slash if the path is empty (i.e., the root)
+      routeTitle = path === '/' ? 'Dashboard' : path.split('/').filter(Boolean).join(' / ') || 'Dashboard';
+  }
+
+  // Initialize on page load
+  updateRouteTitle();
+
   return (
     <header className="text-white z-10 top-0 sticky bg-white">
       <div className="flex items-center justify-between px-6 py-4">
         {/* Logo */}
+        <h2 className="text-gray-500 capitalize font-medium">{routeTitle}</h2>
         <div className="flex items-center space-x-2">
           <button onClick={toggleSidebar} className="text-2xl p-2 text-slate-900 lg:hidden focus:outline-none" aria-label="Open Sidebar">
             ☰

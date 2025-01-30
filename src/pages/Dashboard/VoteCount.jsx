@@ -1,18 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress"; // Assuming Progress component from ShadCN UI
+import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
 
-// Array of political party names for dynamic rendering
+// Array of political party names and associated colors
 const parties = [
-  "NNPP", "LP", "YPP", "ADC", "SDP", "APGA", "APC", "PDP"
+  { name: "NNPP", color: "bg-blue-500" },
+  { name: "LP", color: "bg-green-500" },
+  { name: "YPP", color: "bg-yellow-500" },
+  { name: "ADC", color: "bg-red-500" },
+  { name: "SDP", color: "bg-purple-500" },
+  { name: "APGA", color: "bg-orange-500" },
+  { name: "APC", color: "bg-teal-500" },
+  { name: "PDP", color: "bg-indigo-500" },
 ];
 
 const VoteCount = () => {
   const [votes, setVotes] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Using dummy data for votes instead of an API call
   useEffect(() => {
     const fetchVotes = () => {
       setLoading(true);
@@ -27,55 +33,44 @@ const VoteCount = () => {
           APC: 50400,
           PDP: 60900,
         };
-        setVotes(dummyVotes); // Set the dummy votes data
+        setVotes(dummyVotes);
         setLoading(false);
-      }, 1000); // Simulate a delay for the API call
+      }, 1000);
     };
-
     fetchVotes();
   }, []);
 
-  // Calculate the total votes
   const totalVotes = Object.values(votes).reduce((acc, voteCount) => acc + voteCount, 0);
 
   return (
     <div className="p-6">
-      {/* Heading and description */}
       <h1 className="text-4xl font-bold text-center text-blue-600 mb-4">Vote Statistics</h1>
       <p className="text-xl text-center text-gray-700 mb-8">
         View the live vote count for each political party. This data reflects the current election standings.
       </p>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* Map over the parties array to generate a card for each */}
-        {parties.map((party) => {
-          const partyVotes = votes[party] ?? 0;
+        {parties.map(({ name, color }) => {
+          const partyVotes = votes[name] ?? 0;
           const votePercentage = totalVotes > 0 ? (partyVotes / totalVotes) * 100 : 0;
 
           return (
-            <Card key={party} className="p-6 hover:shadow-lg transform transition-transform duration-300 hover:scale-105">
+            <Card key={name} className="p-6 hover:shadow-lg transform transition-transform duration-300 hover:scale-105">
               <CardContent className="text-center">
-                {/* Party name */}
-                <h3 className="text-2xl font-semibold text-gray-800 mb-4">{party}</h3>
-                
-                {/* Show vote data or loading indicator */}
+                <h3 className="text-2xl font-semibold text-gray-800 mb-4">{name}</h3>
+
                 {loading ? (
-                  <p className="text-xl text-gray-500 animate-pulse">Loading...</p>
+                  <div className="h-6 w-32 bg-gray-300 animate-pulse mx-auto rounded-md"></div>
                 ) : (
                   <>
-                    {/* Vote count */}
-                    <p className="text-3xl font-bold text-gray-900 my-4">{partyVotes}</p>
-                    {/* Progress bar */}
+                    <p className="text-3xl font-bold text-gray-900 my-4">{partyVotes.toLocaleString()}</p>
                     <div className="my-4">
                       <Progress
                         value={votePercentage}
                         max={100}
-                        className="h-4 rounded-lg bg-blue-100"
-                        style={{
-                          backgroundImage: `linear-gradient(90deg, #FBBF24 ${votePercentage}%, #3B82F6 ${votePercentage}%)`,
-                        }}
+                        className={cn("h-4 rounded-lg", color)}
                       />
-                      <p className="text-sm mt-2">{votePercentage.toFixed(2)}%</p>
+                      <p className="text-sm mt-2 font-semibold">{votePercentage.toFixed(2)}%</p>
                     </div>
                   </>
                 )}

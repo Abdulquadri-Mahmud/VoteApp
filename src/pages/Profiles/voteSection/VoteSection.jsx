@@ -6,44 +6,46 @@ const VotingPanel = () => {
   const [previewImage, setPreviewImage] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [errorModal, setErrorModal] = useState({ isOpen: false, message: "" });
-  // const [successModal, setSuccessModal] = useState({ isOpen: false, message: "" });
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
-  const [imageCaptured, setImageCaptured] = useState(false); // Track if an image has been captured
+  const [imageCaptured, setImageCaptured] = useState(false);
+  const [candidates, setCandidates] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [vote, setVote] = useState(null); // New state to store the vote
+  const [hasVoted, setHasVoted] = useState(false); // New state to track if the user has voted
 
   const videoRef = useRef();
   const canvasRef = useRef();
 
-  const candidates = [
-    { name: "Aderonle Fawole", party: "PDP", symbol: "https://upload.wikimedia.org/wikipedia/en/6/62/Logo_of_the_Peoples_Democratic_Party_%28Nigeria%29.png" },
-    { name: "Ngozi Chidioke", party: "APC", symbol: "https://e7.pngegg.com/pngimages/104/910/png-clipart-apc-logo-round-icons-logos-emojis-iconic-brands.png" },
-    { name: "Abdul Salam Abdul Qoyum", party: "APGA", symbol: "https://upload.wikimedia.org/wikipedia/en/b/b3/APGA_Nigeria_Logo.png" },
-    { name: "Abdul-Quadri Nurussalam", party: "NNPP", symbol: "https://cdn.vanguardngr.com/wp-content/uploads/2022/03/NNPP.jpg" },
-  ];
-
-  // Load FaceAPI models
+  // Fetch candidates data from API
   useEffect(() => {
-    const loadModels = async () => {
-      try {
-        const MODEL_URL = `${window.location.origin}/models`; // Adjusted to browser environment
-        // console.log("Models loaded successfully");
-      } catch (error) {
-        console.error("Error loading models:", error);
-        setErrorModal({
-          isOpen: true,
-          message: "Failed to load face detection models. Please try again.",
-        });
-      }
-    };
-    loadModels();
+    fetchCandidates();
+  }, []);
 
-    return () => {
-      // Cleanup camera stream when component unmounts
-      const stream = videoRef.current?.srcObject;
-      if (stream) {
-        const tracks = stream.getTracks();
-        tracks.forEach(track => track.stop());
+  const fetchCandidates = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch("https://vote-app-api.vercel.app/api/candidate/auth/all_candidates");
+      const data = await response.json();
+
+      if (Array.isArray(data)) {
+        setCandidates(data);
+      } else {
+        console.error("Invalid data format:", data);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching candidates:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Check if the user has already voted when the component mounts
+  useEffect(() => {
+    const storedVote = localStorage.getItem("vote");
+    if (storedVote) {
+      setHasVoted(true);
+      setVote(JSON.parse(storedVote));
+    }
   }, []);
 
   const startCamera = () => {
@@ -111,12 +113,27 @@ const VotingPanel = () => {
       return;
     }
 
+    // Find the selected candidate by fullname
+    const candidateData = candidates.find((c) => c.fullname === selectedCandidate);
+
+    // Log the selected candidate's full data to the console
+    console.log("Selected Candidate Info:", candidateData);
+
     const formData = {
       candidate: selectedCandidate,
       userImage: image,
     };
 
-    console.log("Form Data:", formData);
+    // Save the vote in the state
+    setVote({ candidate: selectedCandidate, image });
+
+    // Store the vote in localStorage
+    localStorage.setItem("vote", JSON.stringify({ candidate: candidateData}));
+
+    // Log the vote to the console
+    // console.log("Vote recorded:", { candidate: selectedCandidate, image });
+
+    setHasVoted(true); // Mark that the user has voted
     setErrorModal({
       isOpen: true,
       message: "Your vote has been successfully recorded. Thank you for participating in the election!",
@@ -129,35 +146,75 @@ const VotingPanel = () => {
     setImageCaptured(false); // Allow user to capture another image if needed
   };
 
+  if (hasVoted) {
+    return (
+      <div className="text-center">
+        <h2 className="font-semibold text-lg">You have already voted!</h2>
+        <p>Your vote has been recorded for: {vote.candidate} </p>
+        <button
+          onClick={() => {
+            localStorage.removeItem("vote");
+            setHasVoted(false);
+            setVote(null);
+          }}
+          className="bg-red-500 text-white py-2 px-6 rounded-lg mt-4"
+        >
+          Reset Vote
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="">
-      {/* <h1 className="text-2xl font-bold mb-4 text-center">Voting Panel</h1> */}
-
       <div className="flex gap-5 flex-wrap justify-around">
         {/* Candidate Selection */}
         <div className="flex-1">
           {candidates.map((candidate, index) => (
-            <label key={index} className={`flex items-center justify-between p-2 my-4 rounded-lg border ${
-                selectedCandidate === candidate.name
+            <label
+              key={index}
+              className={`flex items-center justify-between p-2 my-4 rounded-lg border ${
+                selectedCandidate === candidate.fullname
                   ? "border-blue-500 text-gray-800 bg-gray-100"
                   : "border-gray-300"
-              }`}>
-              <input type="radio" name="candidate" value={candidate.name} className="mr-2" onChange={() => setSelectedCandidate(candidate.name)}/>
+              }`}
+            >
+              <input
+                type="radio"
+                name="candidate"
+                value={candidate.fullname}
+                className="mr-2"
+                onChange={() => setSelectedCandidate(candidate.fullname)}
+                disabled={hasVoted} // Disable if the user has voted
+              />
               <div className="flex-1">
-                <p className="font-semibold">{candidate.name}</p>
+                <p className="font-semibold">{candidate.fullname}</p>
                 <p className="text-sm text-blue-500 font-semibold">{candidate.party}</p>
+                {/* Hide gender and state on the UI, but log them in the console */}
+                <p className="text-sm" style={{ display: "none" }}>
+                  {candidate.gender}
+                </p>
+                <p className="text-sm" style={{ display: "none" }}>
+                  {candidate.state}
+                </p>
               </div>
-              <img src={candidate.symbol} alt={candidate.party} className="w-8 h-8 rounded-full"/>
+              <img
+                src={candidate.image} // Make sure to use 'image' if that's the key returned by API
+                alt={candidate.party}
+                className="w-8 h-8 rounded-full"
+              />
             </label>
           ))}
-          
+
           {/* Modal for Camera */}
           <div className="mb-4 mt-5">
-            <button onClick={() => {
+            <button
+              onClick={() => {
                 setIsModalOpen(true);
                 startCamera();
-              }} className="bg-blue-500 text-white py-2 px-4 rounded-lg"
-              disabled={imageCaptured} // Disable if image is already captured
+              }}
+              className="bg-blue-500 text-white py-2 px-4 rounded-lg"
+              disabled={imageCaptured || hasVoted} // Disable if image is already captured or user has voted
             >
               Open Camera
             </button>
@@ -168,7 +225,6 @@ const VotingPanel = () => {
         <div className="flex items-center md:w-[300px] h-[300px] p-3 lg:mt-4 border border-gray-300 rounded-lg w-full space-x-4">
           {previewImage && (
             <div className="flex-1">
-              {/* <h2 className="font-semibold mb-2">Captured Image:</h2> */}
               <img src={previewImage} alt="Captured" className="rounded-md mb-2 w-full " />
               <div className="flex justify-center">
                 <button onClick={deleteImage} className="bg-red-500 text-white py-2 px-4 rounded-lg">
@@ -213,7 +269,6 @@ const VotingPanel = () => {
       {errorModal.isOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center">
           <div className="bg-blue-800 text-white p-8 rounded-lg shadow-xl max-w-md w-full">
-            {/* <h2 className="text-xl font-semibold mb-4">Submission Success</h2> */}
             <p className="text-lg">{errorModal.message}</p>
             <div className="flex justify-end mt-6">
               <button
@@ -229,7 +284,14 @@ const VotingPanel = () => {
 
       {/* Confirmation Checkbox */}
       <div className="flex items-center my-4">
-        <input type="checkbox" id="confirmation" className="mr-2" checked={isCheckboxChecked} onChange={() => setIsCheckboxChecked(!isCheckboxChecked)}/>
+        <input
+          type="checkbox"
+          id="confirmation"
+          className="mr-2"
+          checked={isCheckboxChecked}
+          onChange={() => setIsCheckboxChecked(!isCheckboxChecked)}
+          disabled={hasVoted} // Disable if the user has voted
+        />
         <label htmlFor="confirmation">
           I confirm my selection of {selectedCandidate || "a candidate"}.
         </label>
@@ -238,8 +300,10 @@ const VotingPanel = () => {
       {selectedCandidate && (
         <div className="flex items-center gap-2">
           <h2 className="font-semibold text-[17px] mb-2">Selected Candidate:</h2>
-          <p className="font-">{selectedCandidate}</p>
-          <p className="text-sm">{candidates.find((c) => c.name === selectedCandidate)?.party}</p>
+          <p>{selectedCandidate}</p>
+          <p className="text-sm">
+            {candidates.find((c) => c.fullname === selectedCandidate)?.party}
+          </p>
         </div>
       )}
 
@@ -247,6 +311,7 @@ const VotingPanel = () => {
       <button
         onClick={handleSubmit}
         className="bg-blue-600 text-white py-2 px-6 font-semibold rounded-lg w-full"
+        disabled={hasVoted} // Disable if the user has voted
       >
         Submit
       </button>

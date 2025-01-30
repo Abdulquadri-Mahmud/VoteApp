@@ -3,8 +3,9 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { signinFailure, signinStart, signinSuccess } from "../../../store/user/ElectorialReducer";
-import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
+import Header from "@/components/Header";
+import Modal from "@/components/modal/Modal";
 
 const ElectorialLogin = () => {
 
@@ -43,18 +44,21 @@ const ElectorialLogin = () => {
 
       const data = await res.json();
 
-      if (data.success === false) {
-        dispatch(signinFailure(data.message));
-        setModalContent({ show: true, title: "Error", message: data.message });
+      if (!res.ok || data.success === false) {
+        dispatch(signinFailure(data.message || "Login failed. Please try again."));
+        setModalContent({ show: true, title: "Error", message: data.message || "Login failed. Please try again." });
         return;
       }
 
       dispatch(signinSuccess(data));
       setModalContent({ show: true, title: "Success", message: "You have successfully logged in!" });
-      setTimeout(() => navigate(`/profile/${data._id}`), 1500);
+
+      const timeout = setTimeout(() => navigate(`/dashboard`), 1500);
+
+      return () => clearTimeout(timeout); // Cleanup
 
     } catch (error) {
-      dispatch(signinFailure(error.message));
+      dispatch(signinFailure(error.message || "An error occurred."));
       setModalContent({ show: true, title: "Error", message: "An error occurred during login. Please try again." });
     }
   };
@@ -87,17 +91,17 @@ const ElectorialLogin = () => {
                 </label>
               </div>
             </div>
-            <button type="submit" className="w-full px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            <button type="submit" className="w-full px-4 py-2 text-white bg-yellow-500 rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:outline-none">
               {
                 loading ? 'Loading...' : 'Login'
               }
             </button>
-            <div className="">
+            {/* <div className="">
               <p className="text-sm">
                 Not have an account?
                 <Link to={'/electorial-signup'} className="text-blue-900"> Sign Up</Link>
               </p>
-            </div>
+            </div> */}
           </form>
           {modalContent.show && (
             <Modal onClose={closeModal}>

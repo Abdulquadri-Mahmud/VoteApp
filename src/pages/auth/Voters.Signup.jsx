@@ -23,14 +23,14 @@ export default function VotersSignup() {
         }));
     }
     const handleSubmit = async (e) => {
-        e.preventDefault;
+        e.preventDefault();
 
         try {
             dispatch(signUpStart());
             
             const endpoint = `https://vote-app-api.vercel.app/api/voter/auth/signup`;
 
-            const res = fetch(endpoint, {
+            const res = await fetch(endpoint, {
                 method: 'POST',
                 headers: {'Content-Type' : 'application/json'},
                 body: JSON.stringify(formData),
@@ -50,7 +50,7 @@ export default function VotersSignup() {
             setModalMessage("Registration successful! You can now log in.");
             setShowModal(true);
 
-            setTimeout(() => navigate("/login"), 1500);
+            setTimeout(() => navigate("/voters-login"), 1500);
 
         } catch (error) {
             dispatch(signUpFailure(err.message));
@@ -96,7 +96,7 @@ export default function VotersSignup() {
                         <div className="mt-5">
                             <p className="text-sm">
                                 Already have an account?
-                                <Link to={'/login'} className="text-blue-900"> Sign In</Link>
+                                <Link to={'/voters-login'} className="text-blue-900"> Sign In</Link>
                             </p>
                         </div>
                     </form>

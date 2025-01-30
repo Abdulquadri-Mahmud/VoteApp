@@ -4,6 +4,7 @@ import { Progress } from "@/components/ui/progress"; // Assuming ShadCN UI has P
 import { Bar, Pie } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from "chart.js";
 import ReactPaginate from "react-paginate"; // Import react-paginate
+import Candidates from "@/components/Candidate";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
@@ -27,7 +28,7 @@ const Dashboard = () => {
       setLoading(true);
       setTimeout(() => {
         const dummyVotes = states.reduce((acc, state) => {
-          acc[state] = Math.floor(Math.random() * 5000); // Random dummy data
+          acc[state] = Math.floor(Math.random() * 1000); // Random dummy data
           return acc;
         }, {});
         setVotes(dummyVotes);
@@ -87,9 +88,9 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="lg:p-6 p-2">
       {/* Dashboard Heading */}
-      <h1 className="text-4xl font-bold text-center text-blue-600 mb-4">Vote Dashboard</h1>
+      <h1 className="text-4xl font-bold text-center text-blue-600 mb-4">Vote <span className="text-yellow-500">Dashboard</span></h1>
       <p className="text-sm text-center text-gray-700 mb-8">
         View the live overview of vote counts and party distributions. Use the filters to customize your view.
       </p>
@@ -100,9 +101,9 @@ const Dashboard = () => {
       </div>
 
       {/* Filtered State Data */}
-      <div className="my-8 p-4 bg-white rounded-md">
+      <div className="my-8 lg:p-4 p-2 bg-white rounded-md">
         <h3 className="text-2xl font-semibold text-center text-gray-800 mb-4">Votes by State</h3>
-        <div className="grid gap-6 grid-cols-2 lg:grid-cols-3">
+        <div className="grid lg:gap-6 gap-4 grid-cols-2 lg:grid-cols-3">
           {loading
             ? Array.from({ length: itemsPerPage }).map((_, index) => (
                 <Card className="p-6 shadow-lg animate-pulse" key={index}>
@@ -112,10 +113,10 @@ const Dashboard = () => {
                 </Card>
               ))
             : displayStates.map((state) => (
-                <Card className="p-6 shadow-lg" key={state}>
+                <Card className="p-6 shadow-lg font-semibold" key={state}>
                   <CardContent className="text-center">
-                    <h4 className="font-semibold">{state}</h4>
-                    <p className="text-xl">{votes[state]}</p>
+                    <h4 className="font-medium text-gray-400">{state}</h4>
+                    <p className="text-4xl pt-2 text-yellow-500 font-bold">{votes[state]}</p>
                   </CardContent>
                 </Card>
               ))}
@@ -123,14 +124,14 @@ const Dashboard = () => {
       </div>
 
       {/* Pagination */}
-      <div className="mt-6 flex justify-center bg-white p-2 rounded-md lg:max-w-3xl max-w-full mx-auto">
+      <div className="mt-6 flex justify-center bg-white p-2 rounded-md lg:max-w-xl max-w-full mx-auto">
         <ReactPaginate
-          previousLabel={"← Previous"}
-          nextLabel={"Next →"}
+          previousLabel={"Prev"}
+          nextLabel={"Next"}
           breakLabel={"..."}
           pageCount={pageCount}
           onPageChange={handlePageChange}
-          containerClassName={"flex items-center gap-3"}
+          containerClassName={"flex items-center flex-wrap lg:gap-3  gap-1"}
           activeClassName={"bg-blue-500 text-white rounded-md"}
           pageClassName={"px-3 py-1 bg-yellow-200 font-semibold rounded-md cursor-pointer hover:bg-blue-500 hover:text-white"}
           previousClassName={"px-3 py-1 bg-blue-500 text-white rounded-full cursor-pointer hover:bg-blue-500 hover:text-white"}
@@ -161,6 +162,9 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* All candidates */}
+      <Candidates/>
 
       {/* Total Votes Summary */}
       <div className="mt-8 text-center">

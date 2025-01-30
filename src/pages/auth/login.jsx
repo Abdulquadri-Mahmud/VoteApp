@@ -33,7 +33,7 @@ const Login = () => {
     e.preventDefault();
     try {
       dispatch(signinStart());
-      const endpoint = `https://vote-app-api.vercel.app/api/candidate-voter/auth/signin`;
+      const endpoint = `https://vote-app-api.vercel.app/api/voter/auth/signin`;
 
       const res = await fetch(endpoint, {
         method: 'POST',
