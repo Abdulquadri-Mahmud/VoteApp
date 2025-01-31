@@ -66,7 +66,7 @@ const Login = () => {
   return (
     <>
       <Header />
-      <div className="flex items-center justify-center py-20 bg-gradient-to-b from-blue-800 to-blue-400">
+      <div className="flex items-center justify-center py-20 px-2 bg-gradient-to-b from-blue-800 to-blue-400">
         <form onSubmit={handleSubmit} className="w-full max-w-md p-6 space-y-6 bg-white shadow-md rounded-lg">
           <h2 className="text-2xl font-bold text-center text-gray-800">Voters Login</h2>
 
