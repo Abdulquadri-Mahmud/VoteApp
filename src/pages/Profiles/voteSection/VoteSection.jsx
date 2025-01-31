@@ -1,20 +1,21 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import Webcam from "react-webcam";
 
 const VotingPanel = () => {
+  const { id } = useParams();
+
+  console.log(id);
+  
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [image, setImage] = useState(null);
-  const [previewImage, setPreviewImage] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [errorModal, setErrorModal] = useState({ isOpen: false, message: "" });
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
   const [imageCaptured, setImageCaptured] = useState(false);
   const [candidates, setCandidates] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [vote, setVote] = useState(null); // New state to store the vote
-  const [hasVoted, setHasVoted] = useState(false); // New state to track if the user has voted
-
-  const videoRef = useRef();
-  const canvasRef = useRef();
+  const [vote, setVote] = useState(null);
+  const [hasVoted, setHasVoted] = useState(false);
 
   // Fetch candidates data from API
   useEffect(() => {
@@ -39,7 +40,6 @@ const VotingPanel = () => {
     }
   };
 
-  // Check if the user has already voted when the component mounts
   useEffect(() => {
     const storedVote = localStorage.getItem("vote");
     if (storedVote) {
@@ -48,36 +48,35 @@ const VotingPanel = () => {
     }
   }, []);
 
-  const startCamera = () => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true })
-      .then((stream) => {
-        videoRef.current.srcObject = stream;
-      })
-      .catch((err) => console.error("Error accessing camera:", err));
+  // Camera functionalities
+  const webRef = useRef(null);
+  const [isCameraOn, setIsCameraOn] = useState(false);
+
+  const videoConstraints = {
+    width: 250,
+    height: 200,
+    facingMode: "user",
   };
 
-  const captureImage = async () => {
-    const canvas = canvasRef.current;
-    const video = videoRef.current;
-
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const context = canvas.getContext("2d");
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    const imageData = canvas.toDataURL("image/png");
-    setPreviewImage(imageData);
-    setImage(imageData);
-    setImageCaptured(true); // Mark image as captured
+  const startCamera = () => {
+    setIsCameraOn(true);
   };
 
   const stopCamera = () => {
-    const stream = videoRef.current?.srcObject;
-    if (stream) {
-      const tracks = stream.getTracks();
-      tracks.forEach(track => track.stop());
+    setIsCameraOn(false);
+  };
+
+  const captureImage = () => {
+    if (webRef.current) {
+      setImage(webRef.current.getScreenshot());
+      setImageCaptured(true);
+      setIsCameraOn(false); // Turn off the camera after capturing the image
     }
+  };
+
+  const handleDelete = () => {
+    setImage(null);
+    setImageCaptured(false);
   };
 
   const handleSubmit = () => {
@@ -113,37 +112,38 @@ const VotingPanel = () => {
       return;
     }
 
-    // Find the selected candidate by fullname
+    // Find the selected candidate's full details
     const candidateData = candidates.find((c) => c.fullname === selectedCandidate);
 
-    // Log the selected candidate's full data to the console
-    console.log("Selected Candidate Info:", candidateData);
+    if (candidateData) {
+      // Store candidate info and image in localStorage
+      const formData = {
+        candidate: candidateData, // store entire candidate object
+        userImage: image,         // store captured image
+      };
 
-    const formData = {
-      candidate: selectedCandidate,
-      userImage: image,
-    };
+      // Save vote to localStorage
+      localStorage.setItem("vote", JSON.stringify(formData));
 
-    // Save the vote in the state
-    setVote({ candidate: selectedCandidate, image });
+      // Set vote state and mark the user as having voted
+      setVote(formData);
+      setHasVoted(true);
 
-    // Store the vote in localStorage
-    localStorage.setItem("vote", JSON.stringify({ candidate: candidateData}));
-
-    // Log the vote to the console
-    // console.log("Vote recorded:", { candidate: selectedCandidate, image });
-
-    setHasVoted(true); // Mark that the user has voted
-    setErrorModal({
-      isOpen: true,
-      message: "Your vote has been successfully recorded. Thank you for participating in the election!",
-    });
+      setErrorModal({
+        isOpen: true,
+        message: "Your vote has been successfully recorded. Thank you for participating in the election!",
+      });
+    } else {
+      setErrorModal({
+        isOpen: true,
+        message: "Candidate not found!",
+      });
+    }
   };
 
   const deleteImage = () => {
     setImage(null);
-    setPreviewImage(null);
-    setImageCaptured(false); // Allow user to capture another image if needed
+    setImageCaptured(false);
   };
 
   if (hasVoted) {
@@ -151,24 +151,13 @@ const VotingPanel = () => {
       <div className="text-center">
         <h2 className="font-semibold text-lg">You have already voted!</h2>
         <p>Your vote has been recorded for: {vote.candidate.fullname || vote.candidate} from the ({vote.candidate.party || vote.candidate}) party</p>
-        {/* <button
-          onClick={() => {
-            localStorage.removeItem("vote");
-            setHasVoted(false);
-            setVote(null);
-          }}
-          className="bg-red-500 text-white py-2 px-6 rounded-lg mt-4"
-        >
-          Reset Vote
-        </button> */}
       </div>
     );
   }
 
   return (
-    <div className="">
+    <div>
       <div className="flex gap-5 flex-wrap justify-around">
-        {/* Candidate Selection */}
         <div className="flex-1">
           {candidates.map((candidate, index) => (
             <label
@@ -179,102 +168,79 @@ const VotingPanel = () => {
                   : "border-gray-300"
               }`}
             >
-              <input
-                type="radio"
-                name="candidate"
-                value={candidate.fullname}
-                className="mr-2"
-                onChange={() => setSelectedCandidate(candidate.fullname)}
-                disabled={hasVoted} // Disable if the user has voted
-              />
+              <input type="radio" name="candidate" value={candidate.fullname} className="mr-2" onChange={() => setSelectedCandidate(candidate.fullname)} disabled={hasVoted}/>
               <div className="flex-1">
                 <p className="font-semibold">{candidate.fullname}</p>
                 <p className="text-sm text-blue-500 font-semibold">{candidate.party}</p>
-                {/* Hide gender and state on the UI, but log them in the console */}
-                <p className="text-sm" style={{ display: "none" }}>
-                  {candidate.gender}
-                </p>
-                <p className="text-sm" style={{ display: "none" }}>
-                  {candidate.state}
-                </p>
+                <p className="text-sm" style={{ display: "none" }}>{candidate.gender}</p>
+                <p className="text-sm" style={{ display: "none" }}>{candidate.state}</p>
               </div>
               <img
-                src={candidate.image} // Make sure to use 'image' if that's the key returned by API
+                src={candidate.image}
                 alt={candidate.party}
                 className="w-8 h-8 rounded-full"
               />
             </label>
           ))}
 
-          {/* Modal for Camera */}
           <div className="mb-4 mt-5">
             <button
-              onClick={() => {
-                setIsModalOpen(true);
-                startCamera();
-              }}
+              onClick={startCamera}
+              disabled={imageCaptured || hasVoted}
               className="bg-blue-500 text-white py-2 px-4 rounded-lg"
-              disabled={imageCaptured || hasVoted} // Disable if image is already captured or user has voted
             >
-              Open Camera
+              {isCameraOn ? "Turn off Camera" : "Turn on Camera"}
             </button>
           </div>
         </div>
 
-        {/* Captured Image and Candidate Selection Side by Side */}
         <div className="flex items-center md:w-[300px] h-[300px] p-3 lg:mt-4 border border-gray-300 rounded-lg w-full space-x-4">
-          {previewImage && (
-            <div className="flex-1">
-              <img src={previewImage} alt="Captured" className="rounded-md h-[300px] mb-2 w-full " />
-              <div className="flex justify-center">
-                <button onClick={deleteImage} className="bg-red-500 text-white py-2 px-4 rounded-lg">
-                  Delete Image
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center">
-          <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w-md w-full">
-            <h2 className="text-lg font-bold mb-4">Capture Your Image</h2>
-            <video ref={videoRef} autoPlay className="rounded-md w-full"></video>
-            <canvas ref={canvasRef} className="hidden"></canvas>
-            <div className="flex justify-end mt-4">
-              <button
-                onClick={captureImage}
-                className="bg-green-500 text-white py-2 px-4 rounded-lg mr-2"
-                disabled={imageCaptured} // Disable if image is already captured
-              >
-                Capture
-              </button>
-              <button
-                onClick={() => {
-                  setIsModalOpen(false);
-                  stopCamera();
-                }}
-                className="bg-red-500 text-white py-2 px-4 rounded-lg"
-              >
-                Cancel
-              </button>
+          <div className="flex-1">
+            <div className="fle justify-cente">
+              {
+                isCameraOn ? (
+                    <>
+                        <Webcam ref={webRef} videoConstraints={videoConstraints} audio={false}/>
+                        <div className="flex justify-center mt-4">
+                          <button onClick={captureImage} className="bg-green-500 text-white py-2 px-4 rounded-lg mr-2"disabled={imageCaptured}>
+                            Capture
+                          </button>
+                          <button onClick={stopCamera} className="bg-red-500 text-white py-2 px-4 rounded-lg">
+                            Stop Camera
+                          </button>
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        <div className="">
+                          {
+                            image && (
+                              <>
+                                <img src={image} alt="Captured" className="rounded-md mb-2 max-w-full" />
+                                <div className="flex justify-center">
+                                  <button onClick={deleteImage} className="bg-red-500 text-white py-2 px-4 rounded-lg">
+                                    Delete Image
+                                  </button>
+                                </div>
+                              </>
+                            )
+                          }
+                        </div>
+                    </>
+                )
+              }
             </div>
           </div>
         </div>
-      )}
+      </div>
 
-      {/* Error Modal */}
       {errorModal.isOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center">
-          <div className="bg-blue-800 text-white p-8 rounded-lg shadow-xl max-w-md w-full">
-            <p className="text-lg">{errorModal.message}</p>
-            <div className="flex justify-end mt-6">
-              <button
-                onClick={() => setErrorModal({ isOpen: false, message: "" })}
-                className="bg-yellow-500 text-white py-2 px-6 rounded-lg"
-              >
+          <div className="bg-white relative h-[250px] text-white p-8 rounded-lg shadow-xl max-w-md w-full">
+            <p className="text-lg text-red-600 font-semibold">{errorModal.message}</p>
+            <div className="flex justify-end mt-6 absolute bottom-5 right-5">
+              <button onClick={() => setErrorModal({ isOpen: false, message: "" })}
+                className="bg-yellow-500 text-white py-2 px-6 rounded-lg">
                 Close
               </button>
             </div>
@@ -282,16 +248,10 @@ const VotingPanel = () => {
         </div>
       )}
 
-      {/* Confirmation Checkbox */}
       <div className="flex items-center my-4">
-        <input
-          type="checkbox"
-          id="confirmation"
-          className="mr-2"
-          checked={isCheckboxChecked}
+        <input type="checkbox" id="confirmation" className="mr-2" checked={isCheckboxChecked}
           onChange={() => setIsCheckboxChecked(!isCheckboxChecked)}
-          disabled={hasVoted} // Disable if the user has voted
-        />
+          disabled={hasVoted}/>
         <label htmlFor="confirmation">
           I confirm my selection of {selectedCandidate || "a candidate"}.
         </label>
@@ -307,11 +267,10 @@ const VotingPanel = () => {
         </div>
       )}
 
-      {/* Submit Button */}
       <button
         onClick={handleSubmit}
         className="bg-blue-600 text-white py-2 px-6 font-semibold rounded-lg w-full"
-        disabled={hasVoted} // Disable if the user has voted
+        disabled={hasVoted}
       >
         Submit
       </button>

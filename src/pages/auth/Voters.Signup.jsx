@@ -1,71 +1,72 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { signUpFailure, signUpStart, signUpSuccess } from '../../store/user/userReducer';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import { Eye, EyeOff } from 'lucide-react'; // Import icons
 
 export default function VotersSignup() {
     const [formData, setFormData] = useState({});
-    const [showModal, setShowModal] = useState(false); // To toggle modal visibility
-    const [modalMessage, setModalMessage] = useState(""); // Modal message for success/error
+    const [showPassword, setShowPassword] = useState(false); // Password visibility state
+    const [showModal, setShowModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { loading } = useSelector((state) => state.user);
 
     const handleChange = (e) => {
-        const {name, value} = e.target;
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
 
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value
-        }));
-    }
+    const togglePasswordVisibility = () => {
+        setShowPassword((prev) => !prev);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
             dispatch(signUpStart());
-            
+
             const endpoint = `https://vote-app-api.vercel.app/api/voter/auth/signup`;
 
             const res = await fetch(endpoint, {
                 method: 'POST',
-                headers: {'Content-Type' : 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
             });
 
-            
             const data = await res.json();
-            
+
             if (data.success === false) {
                 dispatch(signUpFailure(data.message));
                 setModalMessage(data.message);
                 setShowModal(true);
                 return;
             }
-    
+
             dispatch(signUpSuccess());
             setModalMessage("Registration successful! You can now log in.");
             setShowModal(true);
 
             setTimeout(() => navigate("/voters-login"), 1500);
-
         } catch (error) {
-            dispatch(signUpFailure(err.message));
+            dispatch(signUpFailure(error.message));
             setModalMessage("An error occurred during registration. Please try again.");
             setShowModal(true);
         }
-    }
+    };
 
     const closeModal = () => {
         setShowModal(false);
     };
 
-  return (
-    <>
-        <Header/>
+    return (
+        <>
+            <Header />
             <div className="min-h-screen bg-gradient-to-b px-2 from-blue-800 to-blue-400">
                 <div className='md:py-20 py-16'>
                     <form onSubmit={handleSubmit} className="md:max-w-xl max-w-[97%] bg-white rounded-md shadow-md md:p-6 p-3 mx-auto">
@@ -74,19 +75,34 @@ export default function VotersSignup() {
                         </div>
                         <div className="mt-3">
                             <label htmlFor="fullname" className="block mb-2 text-sm font-medium text-gray-600">Full name</label>
-                            <input type="text" name="fullname" placeholder="Full Name" onChange={handleChange} required className="px-2 py-3 outline-none border rounded-md w-full text-sm font-normal"/>
+                            <input type="text" name="fullname" placeholder="Full Name" onChange={handleChange} required className="px-2 py-3 outline-none border rounded-md w-full text-sm font-normal" />
                         </div>
                         <div className="mt-3">
                             <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-600">Email</label>
-                            <input type="email" name="email" placeholder="Email" onChange={handleChange} required className="px-2 py-3 outline-none border rounded-md w-full text-sm font-normal"/>
+                            <input type="email" name="email" placeholder="Email" onChange={handleChange} required className="px-2 py-3 outline-none border rounded-md w-full text-sm font-normal" />
                         </div>
                         <div className="mt-3">
                             <label htmlFor="votersCardNumber" className="block mb-2 text-sm font-medium text-gray-600">Voters Card Number</label>
-                            <input type="text" name="votersCardNumber" placeholder="Voter Card Number" onChange={handleChange} required className="px-2 py-3 outline-none border rounded-md w-full text-sm font-normal"/>
+                            <input type="text" name="votersCardNumber" placeholder="Voter Card Number" onChange={handleChange} required className="px-2 py-3 outline-none border rounded-md w-full text-sm font-normal" />
                         </div>
-                        <div className="mt-3">
+                        <div className="mt-3 relative">
                             <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-600">Password</label>
-                            <input type="password" name="password" placeholder="Password" onChange={handleChange} required className="px-2 py-3 outline-none border rounded-md w-full text-sm font-normal"/>
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    name="password"
+                                    placeholder="Password"
+                                    onChange={handleChange}
+                                    required
+                                    className="px-2 py-3 outline-none border rounded-md w-full text-sm font-normal pr-10"
+                                />
+                                <button
+                                    type="button"
+                                    className="absolute inset-y-0 right-2 flex items-center text-gray-500 border-none outline-none"
+                                    onClick={togglePasswordVisibility}>
+                                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                </button>
+                            </div>
                         </div>
                         <div className="mt-3">
                             <button type="submit" className="w-full bg-yellow-500 text-white py-2 rounded-md font-semibold">
@@ -114,7 +130,7 @@ export default function VotersSignup() {
                     </div>
                 )}
             </div>
-        <Footer/>
-    </>
-  )
+            <Footer />
+        </>
+    );
 }
