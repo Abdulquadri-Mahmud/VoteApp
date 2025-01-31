@@ -81,7 +81,7 @@ const Profile = () => {
                 <input onChange={handleChange} id="password" type="password" className="p-3 border-2 border-gray-200 outline-none w-full rounded-md text-sm"/>
               </div>
               <div className="flex justify-between items-center mt-3">
-                <button  type="submit"  className="w-[200px] py-2 bg-yellow-500 text-white uppercase font-medium rounded-md">
+                <button  type="submit"  className="md:w-[200px] py-2 bg-yellow-500 text-white uppercase font-medium rounded-md">
                   {loading ? "Loading..." : "Save Changes"}
                 </button>
                 <VoterLogoutButton />
