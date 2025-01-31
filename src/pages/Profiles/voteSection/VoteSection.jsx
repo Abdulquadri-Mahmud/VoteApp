@@ -212,7 +212,7 @@ const VotingPanel = () => {
                     </>
                 ) : (
                     <>
-                        <div className="flex justify-center">
+                        <div className="">
                           {
                             image && (
                               <>
