@@ -225,7 +225,7 @@ const VotingPanel = () => {
         <div className="flex items-center md:w-[300px] h-[300px] p-3 lg:mt-4 border border-gray-300 rounded-lg w-full space-x-4">
           {previewImage && (
             <div className="flex-1">
-              <img src={previewImage} alt="Captured" className="rounded-md mb-2 w-full " />
+              <img src={previewImage} alt="Captured" className="rounded-md h-[300px] mb-2 w-full " />
               <div className="flex justify-center">
                 <button onClick={deleteImage} className="bg-red-500 text-white py-2 px-4 rounded-lg">
                   Delete Image
