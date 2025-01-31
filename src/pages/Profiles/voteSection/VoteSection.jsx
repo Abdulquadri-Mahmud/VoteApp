@@ -4,7 +4,7 @@ import Webcam from "react-webcam";
 
 const VotingPanel = () => {
   const { id } = useParams();
-  
+
   console.log(id);
   
   const [selectedCandidate, setSelectedCandidate] = useState(null);
@@ -43,13 +43,10 @@ const VotingPanel = () => {
   useEffect(() => {
     const storedVote = localStorage.getItem("vote");
     if (storedVote) {
-      const parsedVote = JSON.parse(storedVote);
-      setVote(parsedVote);
-      if (parsedVote?.userID === id) {
-        setHasVoted(true);
-      }
+      setHasVoted(true);
+      setVote(JSON.parse(storedVote));
     }
-  }, [id]);
+  }, []);
 
   // Camera functionalities
   const webRef = useRef(null);
@@ -121,7 +118,6 @@ const VotingPanel = () => {
     if (candidateData) {
       // Store candidate info and image in localStorage
       const formData = {
-        userID: id,  // Store the user ID from URL
         candidate: candidateData, // store entire candidate object
         userImage: image,         // store captured image
       };
@@ -150,24 +146,11 @@ const VotingPanel = () => {
     setImageCaptured(false);
   };
 
-  const resetVote = () => {
-    localStorage.removeItem("vote");
-    setVote(null);
-    setHasVoted(false);
-    setSelectedCandidate(null);
-    setImage(null);
-    setImageCaptured(false);
-    setIsCheckboxChecked(false);
-  };
-
   if (hasVoted) {
     return (
       <div className="text-center">
         <h2 className="font-semibold text-lg">You have already voted!</h2>
         <p>Your vote has been recorded for: {vote.candidate.fullname || vote.candidate} from the ({vote.candidate.party || vote.candidate}) party</p>
-        <button onClick={resetVote} className="bg-yellow-500 text-white py-2 px-4 rounded-lg">
-          Reset Vote
-        </button>
       </div>
     );
   }
@@ -201,7 +184,8 @@ const VotingPanel = () => {
           ))}
 
           <div className="mb-4 mt-5">
-            <button onClick={startCamera}
+            <button
+              onClick={startCamera}
               disabled={imageCaptured || hasVoted}
               className="bg-blue-500 text-white py-2 px-4 rounded-lg"
             >
@@ -210,7 +194,7 @@ const VotingPanel = () => {
           </div>
         </div>
 
-        <div className="flex items-center md:w-[300px] h-[300px] p-3 lg:mt-4 border border-gray-300 rounded-lg w-full space-x-4">
+        <div className="flex items-center md:w-[300px] p-3 lg:mt-4 border border-gray-300 rounded-lg w-full space-x-4">
           <div className="flex-1">
             <div className="fle justify-cente">
               {
@@ -218,7 +202,7 @@ const VotingPanel = () => {
                     <>
                         <Webcam ref={webRef} videoConstraints={videoConstraints} audio={false}/>
                         <div className="flex justify-center mt-4">
-                          <button onClick={captureImage} className="bg-green-500 text-white py-2 px-4 rounded-lg mr-2" disabled={imageCaptured}>
+                          <button onClick={captureImage} className="bg-green-500 text-white py-2 px-4 rounded-lg mr-2"disabled={imageCaptured}>
                             Capture
                           </button>
                           <button onClick={stopCamera} className="bg-red-500 text-white py-2 px-4 rounded-lg">
@@ -228,7 +212,7 @@ const VotingPanel = () => {
                     </>
                 ) : (
                     <>
-                        <div className="">
+                        <div className="flex justify-center">
                           {
                             image && (
                               <>
