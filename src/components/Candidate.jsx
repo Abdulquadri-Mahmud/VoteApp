@@ -109,7 +109,7 @@ function Candidates() {
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 w-full text-left"
                           aria-label={`View details for ${candidate.name}`}
                         >
-                          <Link to={`update-candidate/${candidate._id}`} title={`View details of ${candidate.fullname}`}>
+                          <Link to={`all-candidate/update-candidate/${candidate._id}`} title={`View details of ${candidate.fullname}`}>
                             View Details
                           </Link>
                         </button>

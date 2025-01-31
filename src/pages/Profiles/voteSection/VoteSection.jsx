@@ -150,8 +150,8 @@ const VotingPanel = () => {
     return (
       <div className="text-center">
         <h2 className="font-semibold text-lg">You have already voted!</h2>
-        <p>Your vote has been recorded for: {vote.candidate} </p>
-        <button
+        <p>Your vote has been recorded for: {vote.candidate.fullname || vote.candidate} from the ({vote.candidate.party || vote.candidate}) party</p>
+        {/* <button
           onClick={() => {
             localStorage.removeItem("vote");
             setHasVoted(false);
@@ -160,7 +160,7 @@ const VotingPanel = () => {
           className="bg-red-500 text-white py-2 px-6 rounded-lg mt-4"
         >
           Reset Vote
-        </button>
+        </button> */}
       </div>
     );
   }
