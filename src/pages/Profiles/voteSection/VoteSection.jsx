@@ -79,7 +79,9 @@ const VotingPanel = () => {
     setImageCaptured(false);
   };
 
-  const handleSubmit = () => {
+  console.log(vote);
+
+  const handleSubmit = async () => {
     if (!selectedCandidate && image) {
       setErrorModal({
         isOpen: true,
@@ -116,30 +118,58 @@ const VotingPanel = () => {
     const candidateData = candidates.find((c) => c.fullname === selectedCandidate);
 
     if (candidateData) {
-      // Store candidate info and image in localStorage
-      const formData = {
-        candidate: candidateData, // store entire candidate object
-        userImage: image,         // store captured image
+      const payload = {
+        condidateName: candidateData.fullname,
+        party: candidateData.party,
+        state: candidateData.state,
+        // userImage: image,
       };
 
-      // Save vote to localStorage
-      localStorage.setItem("vote", JSON.stringify(formData));
+      try {
+        setLoading(true);
 
-      // Set vote state and mark the user as having voted
-      setVote(formData);
-      setHasVoted(true);
+        const response = await fetch("https://vote-app-api.vercel.app/api/votes/candidate/vote", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
 
-      setErrorModal({
-        isOpen: true,
-        message: "Your vote has been successfully recorded. Thank you for participating in the election!",
-      });
+        const result = await response.json();
+
+        if (response.ok || result.success === false) {
+          localStorage.setItem("vote", JSON.stringify(payload));
+          setVote(payload);
+          setHasVoted(true);
+          setLoading(false);
+
+          setErrorModal({
+            isOpen: true,
+            message: "Your vote has been successfully recorded. Thank you for participating!",
+          });
+        } else {
+          throw new Error(result.message || "Failed to submit vote.");
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error submitting vote:", error);
+        setErrorModal({
+          isOpen: true,
+          message: "Something went wrong while submitting your vote. Please try again!",
+        });
+        setLoading(false);
+      }
     } else {
       setErrorModal({
         isOpen: true,
         message: "Candidate not found!",
       });
+      setLoading(false);
     }
   };
+
+  // ✅ 
 
   const deleteImage = () => {
     setImage(null);
@@ -150,7 +180,7 @@ const VotingPanel = () => {
     return (
       <div className="text-center">
         <h2 className="font-semibold text-lg">You have already voted!</h2>
-        <p>Your vote has been recorded for: {vote.candidate.fullname || vote.candidate} from the ({vote.candidate.party || vote.candidate}) party</p>
+        <p>Your vote has been recorded for: {vote.candidate?.condidateName || vote.condidateName} from the ({vote.candidate?.party || vote.party}) party</p>
       </div>
     );
   }
@@ -272,7 +302,7 @@ const VotingPanel = () => {
         className="bg-blue-600 text-white py-2 px-6 font-semibold rounded-lg w-full"
         disabled={hasVoted}
       >
-        Submit
+        {loading ? 'Authenticating...' : 'Submit'}
       </button>
     </div>
   );

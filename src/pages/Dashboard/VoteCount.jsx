@@ -20,23 +20,37 @@ const VoteCount = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchVotes = () => {
+    const fetchVotes = async () => {
       setLoading(true);
-      setTimeout(() => {
-        const dummyVotes = {
-          NNPP: 10600,
-          LP: 15900,
-          YPP: 40800,
-          ADC: 2000,
-          SDP: 35800,
-          APGA: 700000,
-          APC: 50400,
-          PDP: 60900,
-        };
-        setVotes(dummyVotes);
+      try {
+        const endpoint = "https://vote-app-api.vercel.app/api/votes/candidate/results";
+        const response = await fetch(endpoint);
+        const data = await response.json();
+
+        if (response.ok) {
+          const formattedVotes = {};
+          data.votes.forEach(({ party, count }) => {
+            formattedVotes[party] = count;
+          });
+
+          // Ensure all predefined parties are included, even if they have no votes
+          parties.forEach(({ name }) => {
+            if (!(name in formattedVotes)) {
+              formattedVotes[name] = 0;
+            }
+          });
+
+          setVotes(formattedVotes);
+        } else {
+          console.error("Failed to fetch data:", data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching votes:", error);
+      } finally {
         setLoading(false);
-      }, 1000);
+      }
     };
+
     fetchVotes();
   }, []);
 
